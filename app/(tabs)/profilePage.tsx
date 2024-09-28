@@ -74,13 +74,13 @@ export default function TabTwoScreen() {
       // Only try to parse JSON if the response is OK
       if (response.ok) {
         const jsonResponse = JSON.parse(responseText);
-        Alert.alert('Success', 'Credentials sent to the server!');
+        // Alert.alert('Success', 'Credentials sent to the server!');
       } else {
-        Alert.alert('Error', 'Failed to send credentials to the server');
+        // Alert.alert('Error', 'Failed to send credentials to the server');
       }
     } catch (error) {
       console.error('Error sending credentials:', error);
-      Alert.alert('Error', 'An error occurred while sending credentials');
+      // Alert.alert('Error', 'An error occurred while sending credentials');
     }
   };
   
@@ -191,7 +191,8 @@ const styles = StyleSheet.create({
   avatar: {
     fontSize: 40,
     // backgroundColor: '#FFC0CB',
-    backgroundColor: 'rgba(65, 56, 57, 0.8)',
+    // backgroundColor: 'rgba(65, 56, 57, 0.8)',
+    backgroundColor: 'rgba(63, 0, 15, 0.5)',
     color: '#fff',
     padding: 20,
     borderRadius: 50,

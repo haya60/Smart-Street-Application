@@ -82,7 +82,8 @@ def stream_video():
     frame_height = int(camera.get(4))
     output_filename = "output_video.mp4"
     output_path = os.path.join(SAVE_DIR, output_filename)
-    video_writer = cv2.VideoWriter(output_path, fourcc, 20.0, (frame_width, frame_height))
+    fps = camera.get(cv2.CAP_PROP_FPS)
+    video_writer = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
 
     def generate_frames():
         while True:
@@ -134,6 +135,7 @@ def stream_video():
             if video_writer:
                 video_writer.write(frame)
 
+
             # Encode frame for live streaming
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
@@ -151,7 +153,7 @@ def stop_stream():
     if video_writer is not None:
         video_writer.release()
         # video_writer = None
-        video_url = f'http://172.20.10.3:5000/videos/{os.path.basename(output_path)}'
+        video_url = f'http://172.20.10.3:6000/videos/{os.path.basename(output_path)}'
         return jsonify({"message": "Video saved", "video_path": video_url})
 
 
@@ -164,4 +166,4 @@ def get_video(filename):
     return send_from_directory(SAVE_DIR, filename)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=6000)
