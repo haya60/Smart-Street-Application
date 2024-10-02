@@ -14,9 +14,9 @@ export default function TabTwoScreen() {
   const getInitials = (fullName) => {
     const nameParts = fullName.trim().split(' ');
     if (nameParts.length >= 2) {
-      return nameParts[0][0] + nameParts[1][0]; // First letter of first and last name
+      return nameParts[0][0] + nameParts[1][0]; 
     } else if (nameParts.length === 1) {
-      return nameParts[0][0]; // Only one part of the name, return first letter
+      return nameParts[0][0]; 
     }
     return '';
   };
@@ -46,8 +46,6 @@ export default function TabTwoScreen() {
       await SecureStore.setItemAsync('password', password);
       await SecureStore.setItemAsync('phoneNumber', phoneNumber);
       await SecureStore.setItemAsync('camera', camera);
-      
-      // Alert.alert('Success', 'Credentials saved successfully!');
     } catch (error) {
       console.error('Failed to save credentials', error);
       Alert.alert('Error', 'Failed to save credentials');
@@ -67,11 +65,10 @@ export default function TabTwoScreen() {
         }),
       });
   
-      // Log the raw response to check if it's valid JSON or an HTML error page
+
       const responseText = await response.text();
       console.log('Response text:', responseText);
-  
-      // Only try to parse JSON if the response is OK
+
       if (response.ok) {
         const jsonResponse = JSON.parse(responseText);
         // Alert.alert('Success', 'Credentials sent to the server!');
@@ -110,7 +107,7 @@ export default function TabTwoScreen() {
       <View style={styles.body}>
         <View style={styles.avatarContainer}>
           <Text style={styles.avatar}>
-            {getInitials(name) || 'NA'} {/* If no name is entered, display 'NA' */}
+            {getInitials(name) || 'NA'} 
           </Text>
         </View>
 
@@ -177,7 +174,8 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     // backgroundColor: '#FFE6E8',
-    backgroundColor: 'rgba(255, 230, 232, 0.2)'
+    // backgroundColor: 'rgba(255, 230, 232, 0.2)',
+    backgroundColor: 'rgba(255, 230, 232, 0.6)',
   },
   body: {
     // backgroundColor: '#fff',

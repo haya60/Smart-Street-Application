@@ -4,13 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import MaskedView from '@react-native-masked-view/masked-view';
 
 const HomeScreen = () => {
-  const navigation = useNavigation(); // use navigation hook to navigate between screens
+  const navigation = useNavigation(); 
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <MaskedView
-          style={{ flexDirection: 'row', height: 60 }} // Set a height for the MaskedView
+          style={{ flexDirection: 'row', height: 60 }} 
           maskElement={
             <View
               style={{
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'rgba(255, 230, 232, 0.2)',
-    // backgroundColor: 'rgba(255, 230, 232, 0.3)',
+    // backgroundColor: 'rgba(255, 230, 232, 0.2)',
+    backgroundColor: 'rgba(255, 230, 232, 0.6)',
   },
   titleContainer: {
     alignItems: 'center',

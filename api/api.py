@@ -68,8 +68,6 @@ violation_color = (0, 0, 255)
 plate_color = (207, 80, 209)
 
 
-# locator = DeviceLocator("dhom222666@gmail.com", "Dd123321")
-# device = locator.get_device(2)
 
 # Directory to save processed videos
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'processed_videos')

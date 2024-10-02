@@ -1,27 +1,34 @@
 import React, { useState } from 'react';
-import { View, Pressable, StyleSheet, Text } from 'react-native';
-import { Video } from 'expo-av';
+import { View, Pressable, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 const LivePage = () => {
-  const [videoUri, setVideoUri] = useState(null);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [liveStreamUri, setLiveStreamUri] = useState(null);
 
   const startStream = async () => {
+    setLoading(true);
     try {
-      // Start live stream
-      const response = await fetch('http://172.20.10.3:6000/stream', {
+      const response = await fetch('http://172.20.10.3:5000/stream', {
         method: 'POST',
       });
       if (!response.ok) {
         throw new Error('Error starting stream');
       }
+      setIsStreaming(true);
+      setLiveStreamUri('http://172.20.10.3:5000/live');
     } catch (error) {
       console.error("Error starting stream", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const stopStream = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('http://172.20.10.3:6000/stop', {
+      const response = await fetch('http://172.20.10.3:5000/stop', {
         method: 'POST',
       });
 
@@ -29,33 +36,34 @@ const LivePage = () => {
         throw new Error('Error stopping stream');
       }
 
-      const result = await response.json();
-      console.log("Video path received:", result.video_path); // Log the path
-      setVideoUri(result.video_path);
+      setIsStreaming(false);
+      setLiveStreamUri(null);
     } catch (error) {
       console.error("Error stopping stream", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Start live streaming to predict violating vehicles:</Text>
-      <Pressable style={styles.button} onPress={startStream}>
+      <Pressable style={styles.button} onPress={startStream} disabled={isStreaming}>
         <Text style={styles.buttonText}>Start Stream</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={stopStream}>
+      <Pressable style={styles.button} onPress={stopStream} disabled={!isStreaming}>
         <Text style={styles.buttonText}>Stop Stream</Text>
       </Pressable>
 
-      {videoUri && (
-        <Video
-          source={{ uri: videoUri }}
-          rate={1.0}
-          volume={1.0}
-          isMuted={false}
-          resizeMode="cover"
-          shouldPlay
-          style={styles.video}
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+      {isStreaming && liveStreamUri && (
+        <WebView
+          source={{ uri: liveStreamUri }}
+          style={[styles.webview, { backgroundColor: 'transparent' }]}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          // scalesPageToFit={true}
         />
       )}
     </View>
@@ -68,7 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'rgba(255, 230, 232, 0.2)',
+    backgroundColor: 'rgba(255, 230, 232, 0.6)',
   },
   title: {
     fontSize: 15,
@@ -95,9 +103,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  video: {
+  webview: {
     width: 300,
-    height: 300,
+    height: 200,
     marginTop: 20,
   },
 });
