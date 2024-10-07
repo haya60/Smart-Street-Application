@@ -9,26 +9,26 @@ import torch
 from ultralytics import YOLO
 import tempfile
 from playsound import playsound
+import pygame
 
 
 
-# YOLO Model Path
 model = YOLO(r'C:\Users\DELL\OneDrive\Documents\final_project-T5\smart_street_app\my-app2\api\venv\best (1).pt')
 
-# Define colors for visualizations
-line_color = (255, 208, 0)
+
+line_color = (255, 255, 0) #***
 car_color = (201, 211, 220)
 violation_color = (0, 0, 255)
 plate_color = (207, 80, 209)
 
-# Directory to save processed videos
+
 SAVE_DIR = 'processed_videos'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-# Streamlit App Title
+
 st.title("Vehicle Violation Detection Live Stream")
 
-# Utility Functions for Center and Distance Calculations
+
 def calculate_center(bbox):
     center_x = round(float((bbox[0][0] + bbox[0][2]) / 2))
     center_y = round(float((bbox[0][1] + bbox[0][3]) / 2))
@@ -54,42 +54,45 @@ def is_line_in_left(frame_center, line_center):
 def is_line_in_right(frame_center, line_center):
     return line_center < frame_center
 
-def check_edge_left(car_x_edge, line_x_edge):
-    return car_x_edge > line_x_edge
+def is_violate_left(car_center , line_center):
+      return car_center > line_center
 
-def check_edge_right(car_x_edge, line_x_edge):
-    return car_x_edge < line_x_edge
+def is_violate_right(car_center , line_center):
+  return line_center > car_center
 
-def check_distance_left(x_car, x_line):
-    difference = x_car - x_line
-    return difference < 50
 
-def check_distance_right(x_car, x_line):
-    difference = x_line - x_car
-    return difference < 50
+def play_sound(file_path: str) -> None:
+    try:
+        # Initialize the mixer
+        pygame.mixer.init()
+        
+        # Load and play the sound
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play()
 
-def play_violation_sound():
-    sound_path = r'C:\Users\DELL\OneDrive\Documents\final_project-T5\smart_street_app_2\my-app3\alarm.mp3'  # Replace with the actual path to your sound file
-    playsound(sound_path)
+        # Wait for the sound to finish playing
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
 
+    except pygame.error as e:
+        print(f"An error occurred: {e}")
 
 
 frame_placeholder = st.empty()
 
 
 def generate_frames():
-    camera = cv2.VideoCapture(0)  # Use 0 for the default camera
+    camera = cv2.VideoCapture(0)  
 
     if not camera.isOpened():
         st.error("Error: Could not open video source.")
         return
 
-    # Set up temporary video file
+
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
     frame_width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Initialize the video writer to save video temporarily
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video_writer = cv2.VideoWriter(temp_file.name, fourcc, 20.0, (frame_width, frame_height))
 
@@ -98,11 +101,11 @@ def generate_frames():
         if not success:
             break
 
-        # Perform object detection and other processing (your existing logic)
+
         frame_center = calculate_frame_center(frame)
         results = model.predict(frame, conf=0.1)
         line_exist = False
-        # play_violation_sound()
+
 
         for result in results:
             if result.masks is not None:
@@ -121,24 +124,24 @@ def generate_frames():
                         points = np.int32([mask])
                         x1_car, y1_car, x2_car, y2_car = map(int, box.xyxy[0])
                         car_center = calculate_center(box.xyxy)
+                        cv2.circle(frame,car_center, 10, (255, 255, 0), -1)
 
                         if line_exist:
                             if is_line_in_left(frame_center, line_center):
-                                if check_distance_left(x2_car, x1_line):
-                                    if check_edge_left((x2_car-10, y1_car), (x1_line, y1_line)): 
-                                        print('************ violation detected ***************')
-                                        cv2.rectangle(frame, (x1_car, y1_car), (x2_car, y2_car), violation_color, 3)
-                                        # play_violation_sound()
+                                if is_violate_left(car_center, line_center):
+                                    print('************ violation detected ***************')
+                                    cv2.rectangle(frame, (x1_car, y1_car), (x2_car, y2_car), violation_color, 3)
+                                    play_sound(r'C:\Users\DELL\OneDrive\Documents\final_project-T5\smart_street_app_2\my-app3\alarm (1).mp3')
+
 
                             if is_line_in_right(frame_center, line_center):
-                                if check_distance_right(x1_car, x2_line):
-                                    if check_edge_right((x1_car+10, y1_car), (x2_line, y1_line)):
-                                        print('************ violation detected ***************')
-                                        cv2.rectangle(frame, (x1_car, y1_car), (x2_car, y2_car), violation_color, 3)
-                                        # play_violation_sound()
-        # Update the placeholder with the current frame for live stream
+                                if is_violate_right(car_center, line_center):
+                                    print('************ violation detected ***************')
+                                    cv2.rectangle(frame, (x1_car, y1_car), (x2_car, y2_car), violation_color, 3)
+                                    play_sound(r'C:\Users\DELL\OneDrive\Documents\final_project-T5\smart_street_app_2\my-app3\alarm (1).mp3')
+
+
         frame_placeholder.image(frame, channels="BGR", caption="Smart Street Live Streaming")
-        # Write the frame to the temporary video file
         video_writer.write(frame)
 
 

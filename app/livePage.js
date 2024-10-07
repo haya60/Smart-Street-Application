@@ -31,6 +31,39 @@ const LivePage = () => {
     }
   };
 
+  // const startStream = async () => {
+  //   setLoading(true);
+  //   try {
+  //     // Send a request to the Flask API to start the stream
+  //     await fetch('http://172.20.10.3:5000/start-stream', {
+  //       method: 'POST',
+  //     });
+  //     setIsStreaming(true);
+  //     setLiveStreamUri('http://172.20.10.3:8501');  // Replace with your Streamlit server URL
+  //   } catch (error) {
+  //     console.error("Error starting stream", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
+  // const stopStream = async () => {
+  //   setLoading(true);
+  //   try {
+  //     // Send a request to the Flask API to stop the stream
+  //     await fetch('http://172.20.10.3:5000/stop-stream', {
+  //       method: 'POST',
+  //     });
+  //     setIsStreaming(false);
+  //     setLiveStreamUri(null);
+  //   } catch (error) {
+  //     console.error("Error stopping stream", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Start live streaming to predict violating vehicles:</Text>
