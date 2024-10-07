@@ -87,7 +87,7 @@ def generate_frames():
 
         # Perform object detection and other processing (your existing logic)
         frame_center = calculate_frame_center(frame)
-        results = model.predict(frame)
+        results = model.predict(frame, conf=0.1)
         line_exist = False
 
         for result in results:

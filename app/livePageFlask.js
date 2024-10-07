@@ -10,8 +10,14 @@ const LivePage = () => {
   const startStream = async () => {
     setLoading(true);
     try {
+      const response = await fetch('http://172.20.10.3:5000/stream', {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error('Error starting stream');
+      }
       setIsStreaming(true);
-      setLiveStreamUri('http://172.20.10.3:8501');  // Replace with your Streamlit server URL
+      setLiveStreamUri('http://172.20.10.3:5000/live');
     } catch (error) {
       console.error("Error starting stream", error);
     } finally {
@@ -22,6 +28,14 @@ const LivePage = () => {
   const stopStream = async () => {
     setLoading(true);
     try {
+      const response = await fetch('http://172.20.10.3:5000/stop', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error stopping stream');
+      }
+
       setIsStreaming(false);
       setLiveStreamUri(null);
     } catch (error) {
@@ -49,51 +63,51 @@ const LivePage = () => {
           style={[styles.webview, { backgroundColor: 'transparent' }]}
           javaScriptEnabled={true}
           domStorageEnabled={true}
+          // scalesPageToFit={true}
         />
       )}
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-      backgroundColor: 'rgba(255, 230, 232, 0.6)',
-    },
-    title: {
-      fontSize: 15,
-      fontWeight: 'bold',
-      color: '#fff',
-      marginBottom: 15,
-    },
-    button: {
-      backgroundColor: 'rgba(63, 0, 15, 0.5)',
-      paddingVertical: 15,
-      paddingHorizontal: 30,
-      borderRadius: 10,
-      marginVertical: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 2,
-      elevation: 5,
-      width: 230,
-    },
-    buttonText: {
-      color: '#FFF',
-      fontSize: 18,
-      fontWeight: '600',
-      textAlign: 'center',
-    },
-    webview: {
-      width: 300,
-      height: 200,
-      marginTop: 20,
-    },
-  });
-  
-  export default LivePage;
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(255, 230, 232, 0.6)',
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: 'rgba(63, 0, 15, 0.5)',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+    width: 230,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  webview: {
+    width: 300,
+    height: 200,
+    marginTop: 20,
+  },
+});
+
+export default LivePage;
